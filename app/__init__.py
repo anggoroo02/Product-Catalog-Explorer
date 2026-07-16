@@ -10,6 +10,7 @@ from app.extensions import (
 
 from app.auth import auth_bp
 from app.dashboard import dashboard_bp
+from app.favorites import favorites_bp
 
 
 def create_app():
@@ -27,6 +28,7 @@ def create_app():
     # Register blueprint
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(favorites_bp)
 
     # Route root
     @app.route("/")
