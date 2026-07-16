@@ -26,9 +26,11 @@ from app.models import User
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
 
+    print("LOGIN ROUTE DIPANGGIL")
     form = LoginForm()
 
     if form.validate_on_submit():
+        print("FORM VALID")
 
         identifier = form.username_or_email.data.strip()
 
@@ -69,7 +71,6 @@ def login():
         "auth/login.html",
         form=form
     )
-
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
