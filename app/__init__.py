@@ -1,8 +1,11 @@
 from flask import Flask
 
 from config import Config
-from app.extensions import db, login_manager
-
+from app.extensions import (
+    db,
+    login_manager,
+    migrate
+)
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +14,7 @@ def create_app():
     # Inisialisasi extension
     from app import models
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
 
     # Route sementara untuk memastikan aplikasi berjalan
