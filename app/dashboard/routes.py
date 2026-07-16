@@ -8,7 +8,7 @@ from flask_login import (
 from app.dashboard import dashboard_bp
 
 
-@dashboard_bp.route("/")
+@dashboard_bp.route("")
 @login_required
 def index():
 
