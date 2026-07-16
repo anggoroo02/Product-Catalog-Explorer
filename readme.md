@@ -292,3 +292,5 @@ Detail Produk
             ▼
         SQLite
 ```
+
+note: app ini dibuat untuk menyelesaikan tugas kuliah Pemrograman Back-End
