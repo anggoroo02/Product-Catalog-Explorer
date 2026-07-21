@@ -1,6 +1,12 @@
 import requests
 
 from flask import current_app
+from requests.exceptions import (
+    Timeout,
+    ConnectionError,
+    HTTPError,
+    RequestException
+)
 
 
 def _request(endpoint):
@@ -9,14 +15,42 @@ def _request(endpoint):
 
     url = f"{base_url}{endpoint}"
 
-    response = requests.get(
-        url,
-        timeout=current_app.config["REQUEST_TIMEOUT"]
-    )
+    try:
 
-    response.raise_for_status()
+        response = requests.get(
+            url,
+            timeout=current_app.config["REQUEST_TIMEOUT"]
+        )
 
-    return response.json()
+        response.raise_for_status()
+
+        return response.json()
+
+    except Timeout:
+
+        current_app.logger.error(
+            "FakeStore API timeout."
+        )
+
+    except ConnectionError:
+
+        current_app.logger.error(
+            "Tidak dapat terhubung ke FakeStore API."
+        )
+
+    except HTTPError as e:
+
+        current_app.logger.error(
+            f"HTTP Error: {e}"
+        )
+
+    except RequestException as e:
+
+        current_app.logger.error(
+            f"Request Error: {e}"
+        )
+
+    return None
 
 
 def get_all_products():
