@@ -8,10 +8,64 @@ Favorites
 
 <h2>Favorites</h2>
 
-<p class="text-muted">
+{% if products %}
 
-Halaman Favorites
+<div class="row">
+
+{% for product in products %}
+
+<div class="col-md-4 mb-3">
+
+<div class="card h-100">
+
+<img
+src="{{ product.image }}"
+class="card-img-top"
+alt="{{ product.title }}">
+
+<div class="card-body">
+
+<h5>
+
+{{ product.title }}
+
+</h5>
+
+<p>
+
+${{ product.price }}
 
 </p>
+
+<a
+href="{{ url_for(
+'products.detail',
+product_id=product.id
+) }}"
+class="btn btn-primary">
+
+Detail
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<p>
+
+Belum ada favorite.
+
+</p>
+
+{% endif %}
 
 {% endblock %}

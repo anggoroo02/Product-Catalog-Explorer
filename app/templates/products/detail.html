@@ -1,70 +1,164 @@
 {% extends "base.html" %}
 
 {% block title %}
-Product Detail
+{{ product.title }}
 {% endblock %}
 
 {% block content %}
 
 <div class="row">
 
-<div class="col-md-5">
+    <div class="col-md-4">
 
-<img
-src="{{ product.image }}"
-class="img-fluid"
-alt="{{ product.title }}">
+        <img
+            src="{{ product.image }}"
+            alt="{{ product.title }}"
+            class="img-fluid rounded">
+
+    </div>
+
+    <div class="col-md-8">
+
+        <h2>{{ product.title }}</h2>
+
+        <p class="text-muted">
+
+            Kategori:
+            <strong>{{ product.category }}</strong>
+
+        </p>
+
+        <h4 class="text-success">
+
+            ${{ product.price }}
+
+        </h4>
+
+        <p>
+
+            {{ product.description }}
+
+        </p>
+
+        <p>
+
+            <strong>Rating:</strong>
+
+            {{ product.rating.rate }}
+
+            ({{ product.rating.count }} ulasan)
+
+        </p>
+
+        <hr>
+
+        <h5>
+
+            ⭐ Favorite
+
+        </h5>
+
+        {% if favorite %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'favorites.remove',
+                product_id=product.id
+            ) }}">
+
+            <button
+                type="submit"
+                class="btn btn-danger">
+
+                Hapus Favorite
+
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'favorites.add',
+                product_id=product.id
+            ) }}">
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Tambah Favorite
+
+            </button>
+
+        </form>
+
+        {% endif %}
+
+    </div>
 
 </div>
 
-<div class="col-md-7">
+<hr>
 
-<h2>
+<h4>
 
-{{ product.title }}
+    📝 Notes
 
-</h2>
+</h4>
 
-<p>
+{% if notes %}
 
-<strong>Category :</strong>
+    {% for note in notes %}
 
-{{ product.category }}
+    <div class="card mb-3">
 
-</p>
+        <div class="card-body">
 
-<h3>
+            <h5 class="card-title">
 
-${{ product.price }}
+                {{ note.title }}
 
-</h3>
+            </h5>
 
-<p>
+            <p class="card-text">
 
-<strong>Rating :</strong>
+                {{ note.content }}
 
-{{ product.rating.rate }}
+            </p>
 
-({{ product.rating.count }} reviews)
+            <small class="text-muted">
 
-</p>
+                Terakhir diperbarui:
+                {{ note.updated_at.strftime("%d-%m-%Y %H:%M") }}
 
-<p>
+            </small>
 
-{{ product.description }}
+        </div>
 
-</p>
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="alert alert-secondary">
+
+    Belum ada catatan untuk produk ini.
+
+</div>
+
+{% endif %}
 
 <a
-href="{{ url_for('products.index') }}"
-class="btn btn-secondary">
+    href="{{ url_for('products.index') }}"
+    class="btn btn-secondary">
 
-← Kembali
+    ← Kembali ke Daftar Produk
 
 </a>
-
-</div>
-
-</div>
 
 {% endblock %}
