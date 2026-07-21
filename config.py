@@ -12,4 +12,6 @@ class Config:
         "FAKESTORE_API_BASE_URL"
     )
 
-    REQUEST_TIMEOUT = 10
+    REQUEST_TIMEOUT = int(
+        os.getenv("REQUEST_TIMEOUT", 10)
+    )

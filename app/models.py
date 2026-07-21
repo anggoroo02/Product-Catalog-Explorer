@@ -47,6 +47,17 @@ class User(UserMixin, db.Model):
         nullable=False
     )
 
+    favorites = db.relationship(
+        "Favorite",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="favorites"
+    )
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
