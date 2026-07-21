@@ -8,7 +8,6 @@ from app.favorites import favorites_bp
 @favorites_bp.route("/")
 @login_required
 def index():
-
     return render_template(
         "favorites/index.html"
     )
