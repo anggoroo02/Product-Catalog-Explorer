@@ -53,6 +53,12 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan"
     )
 
+    notes = db.relationship(
+        "Note",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -105,6 +111,60 @@ class Favorite(db.Model):
             f"<Favorite user={self.user_id} "
             f"product={self.product_id}>"
         )
+    
+class Note(db.Model):
+    __tablename__ = "notes"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    title = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="notes"
+    )
+
+    def __repr__(self):
+        return (
+            f"<Note {self.id} "
+            f"Product {self.product_id}>"
+        )
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
