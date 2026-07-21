@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ product.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <img
+            src="{{ product.image }}"
+            alt="{{ product.title }}"
+            class="img-fluid"
+        >
+
+    </div>
+
+    <div class="col-md-8">
+
+        <h2>
+
+            {{ product.title }}
+
+        </h2>
+
+        <h3 class="text-success">
+
+            ${{ product.price }}
+
+        </h3>
+
+        <p>
+
+            <strong>Kategori:</strong>
+
+            {{ product.category }}
+
+        </p>
+
+        <p>
+
+            <strong>Rating:</strong>
+
+            {{ product.rating.rate }}
+            ({{ product.rating.count }} review)
+
+        </p>
+
+        <hr>
+
+        <p>
+
+            {{ product.description }}
+
+        </p>
+
+        <hr>
+
+        <h4>
+
+            ⭐ Favorite
+
+        </h4>
+
+        {% if favorite %}
+
+        <button
+            class="btn btn-danger"
+            disabled
+        >
+
+            Hapus Favorite
+
+        </button>
+
+        {% else %}
+
+        <button
+            class="btn btn-primary"
+            disabled
+        >
+
+            Tambah Favorite
+
+        </button>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<hr>
+
+<h3>
+
+    📝 Notes
+
+</h3>
+
+{% if notes %}
+
+    {% for note in notes %}
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <h5>
+
+                {{ note.title }}
+
+            </h5>
+
+            <p>
+
+                {{ note.content }}
+
+            </p>
+
+            <small class="text-muted">
+
+                Terakhir diperbarui:
+                {{ note.updated_at.strftime("%d-%m-%Y %H:%M") }}
+
+            </small>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="alert alert-secondary">
+
+    Belum ada catatan untuk produk ini.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

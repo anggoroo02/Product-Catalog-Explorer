@@ -4,11 +4,21 @@ from flask import (
     redirect,
     url_for
 )
-from flask_login import login_required
+
+from flask_login import (
+    login_required,
+    current_user
+)
 
 from app.products import products_bp
 
 from app.services import product_service
+from app.services.favorite_service import (
+    is_favorite
+)
+from app.services.note_service import (
+    get_product_notes
+)
 
 
 @products_bp.route("")
@@ -36,7 +46,9 @@ def index():
 @login_required
 def detail(product_id):
 
-    product = product_service.get_product_by_id(product_id)
+    product = product_service.get_product_by_id(
+        product_id
+    )
 
     if product is None:
 
@@ -49,7 +61,19 @@ def detail(product_id):
             url_for("products.index")
         )
 
+    favorite = is_favorite(
+        current_user.id,
+        product_id
+    )
+
+    notes = get_product_notes(
+        current_user.id,
+        product_id
+    )
+
     return render_template(
         "products/detail.html",
-        product=product
+        product=product,
+        favorite=favorite,
+        notes=notes
     )
