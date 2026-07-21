@@ -5,7 +5,7 @@ from flask_login import login_required
 from app.notes import notes_bp
 
 
-@notes_bp.route("/")
+@notes_bp.route("")
 @login_required
 def index():
 
