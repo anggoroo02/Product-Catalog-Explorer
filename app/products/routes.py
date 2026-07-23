@@ -11,6 +11,7 @@ from flask_login import (
 )
 
 from app.products import products_bp
+from app.notes.forms import CreateNoteForm
 
 from app.services import product_service
 from app.services.favorite_service import (
@@ -71,9 +72,14 @@ def detail(product_id):
         product_id
     )
 
+    note_form = CreateNoteForm(
+        product_id=product_id
+    )
+
     return render_template(
         "products/detail.html",
         product=product,
         favorite=favorite,
-        notes=notes
+        notes=notes,
+        note_form=note_form
     )

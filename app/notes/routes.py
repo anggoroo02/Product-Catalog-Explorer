@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 
 from app.notes import notes_bp
 from app.notes.forms import CreateNoteForm, NoteForm
+from app.services import product_service
 from app.services.note_service import (
     create_note,
     delete_note,
@@ -18,16 +19,38 @@ from app.services.note_service import (
 )
 
 
+def _get_product_titles(notes):
+    product_titles = {}
+
+    for note in notes:
+        if note.product_id in product_titles:
+            continue
+
+        product = product_service.get_product_by_id(
+            note.product_id
+        )
+
+        product_titles[note.product_id] = (
+            product["title"]
+            if product is not None
+            else "Produk tidak tersedia"
+        )
+
+    return product_titles
+
+
 @notes_bp.route("")
 @login_required
 def index():
     form = CreateNoteForm()
     notes = get_user_notes(current_user.id)
+    product_titles = _get_product_titles(notes)
 
     return render_template(
         "notes/index.html",
         form=form,
-        notes=notes
+        notes=notes,
+        product_titles=product_titles
     )
 
 
@@ -45,15 +68,22 @@ def add():
         )
 
         flash("Note berhasil ditambahkan.", "success")
-        return redirect(url_for("notes.index"))
+        return redirect(
+            url_for(
+                "products.detail",
+                product_id=form.product_id.data
+            )
+        )
 
     flash("Data note tidak valid.", "danger")
     notes = get_user_notes(current_user.id)
+    product_titles = _get_product_titles(notes)
 
     return render_template(
         "notes/index.html",
         form=form,
-        notes=notes
+        notes=notes,
+        product_titles=product_titles
     )
 
 
@@ -78,21 +108,34 @@ def edit(note_id):
 
         if updated_note is None:
             flash("Note tidak ditemukan.", "danger")
+            return redirect(url_for("notes.index"))
         else:
             flash("Note berhasil diperbarui.", "success")
 
-        return redirect(url_for("notes.index"))
+        return redirect(
+            url_for(
+                "products.detail",
+                product_id=note.product_id
+            )
+        )
 
     return render_template(
         "notes/edit.html",
         form=form,
-        note=note
+        note=note,
+        product_title=_get_product_titles([note])[note.product_id]
     )
 
 
 @notes_bp.route("/<int:note_id>/delete", methods=["POST"])
 @login_required
 def delete(note_id):
+    note = get_note(current_user.id, note_id)
+
+    if note is None:
+        flash("Note tidak ditemukan.", "danger")
+        return redirect(url_for("notes.index"))
+
     success = delete_note(current_user.id, note_id)
 
     if success:
@@ -100,4 +143,9 @@ def delete(note_id):
     else:
         flash("Note tidak ditemukan.", "danger")
 
-    return redirect(url_for("notes.index"))
+    return redirect(
+        url_for(
+            "products.detail",
+            product_id=note.product_id
+        )
+    )
