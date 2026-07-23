@@ -8,10 +8,136 @@ Notes
 
 <h2>Notes</h2>
 
-<p class="text-muted">
+<div class="card mb-4">
 
-Halaman Notes
+    <div class="card-body">
 
-</p>
+        <h5 class="card-title">Tambah Note</h5>
+
+        <form method="POST" action="{{ url_for('notes.add') }}">
+
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+
+                {{ form.product_id.label(class="form-label") }}
+
+                {{ form.product_id(class="form-control") }}
+
+                {% for error in form.product_id.errors %}
+
+                <div class="text-danger small">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="mb-3">
+
+                {{ form.title.label(class="form-label") }}
+
+                {{ form.title(class="form-control") }}
+
+                {% for error in form.title.errors %}
+
+                <div class="text-danger small">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="mb-3">
+
+                {{ form.content.label(class="form-label") }}
+
+                {{ form.content(class="form-control", rows="4") }}
+
+                {% for error in form.content.errors %}
+
+                <div class="text-danger small">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+            {{ form.submit(class="btn btn-primary") }}
+
+        </form>
+
+    </div>
+
+</div>
+
+{% if notes %}
+
+    {% for note in notes %}
+
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-start">
+
+                <div>
+
+                    <h5 class="card-title">{{ note.title }}</h5>
+
+                    <p class="text-muted mb-2">
+                        Produk: {{ product_titles[note.product_id] }}
+                    </p>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <a
+                        href="{{ url_for('notes.edit', note_id=note.id) }}"
+                        class="btn btn-sm btn-outline-primary">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('notes.delete', note_id=note.id) }}">
+
+                        <button
+                            type="submit"
+                            class="btn btn-sm btn-outline-danger">
+
+                            Hapus
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <p class="card-text">{{ note.content }}</p>
+
+            <small class="text-muted">
+                Terakhir diperbarui:
+                {{ note.updated_at.strftime("%d-%m-%Y %H:%M") }}
+            </small>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="alert alert-secondary">
+
+    Belum ada note tersimpan. Tambahkan note pertama Anda melalui form di
+    atas.
+
+</div>
+
+{% endif %}
 
 {% endblock %}

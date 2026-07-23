@@ -11,37 +11,29 @@ from flask_login import (
     login_required
 )
 
-from sqlalchemy import or_
-
 from app.auth import auth_bp
 from app.auth.forms import (
     LoginForm,
     RegisterForm
 )
-
-from app.extensions import db
-from app.models import User
+from app.services.auth_service import (
+    authenticate_user,
+    register_user
+)
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
 
-    print("LOGIN ROUTE DIPANGGIL")
     form = LoginForm()
 
     if form.validate_on_submit():
-        print("FORM VALID")
+        user = authenticate_user(
+            form.username_or_email.data,
+            form.password.data
+        )
 
-        identifier = form.username_or_email.data.strip()
-
-        user = User.query.filter(
-            or_(
-                User.username == identifier,
-                User.email == identifier
-            )
-        ).first()
-
-        if user is None or not user.check_password(form.password.data):
+        if user is None:
 
             flash(
                 "Username/email atau password salah.",
@@ -78,12 +70,13 @@ def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
+        user, error = register_user(
+            form.username.data,
+            form.email.data,
+            form.password.data
+        )
 
-        existing_username = User.query.filter_by(
-            username=form.username.data.strip()
-        ).first()
-
-        if existing_username:
+        if error == "username_taken":
 
             flash(
                 "Username sudah digunakan.",
@@ -95,11 +88,7 @@ def register():
                 form=form
             )
 
-        existing_email = User.query.filter_by(
-            email=form.email.data.strip()
-        ).first()
-
-        if existing_email:
+        if error == "email_taken":
 
             flash(
                 "Email sudah digunakan.",
@@ -110,18 +99,6 @@ def register():
                 "auth/register.html",
                 form=form
             )
-
-        user = User(
-            username=form.username.data.strip(),
-            email=form.email.data.strip()
-        )
-
-        user.set_password(
-            form.password.data
-        )
-
-        db.session.add(user)
-        db.session.commit()
 
         flash(
             "Registrasi berhasil. Silakan login.",

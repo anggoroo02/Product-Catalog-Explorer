@@ -110,6 +110,42 @@
 
 </h4>
 
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h5 class="card-title">Tambah Note</h5>
+
+        <form method="POST" action="{{ url_for('notes.add') }}">
+
+            {{ note_form.hidden_tag() }}
+
+            {{ note_form.product_id(type="hidden") }}
+
+            <div class="mb-3">
+
+                {{ note_form.title.label(class="form-label") }}
+
+                {{ note_form.title(class="form-control") }}
+
+            </div>
+
+            <div class="mb-3">
+
+                {{ note_form.content.label(class="form-label") }}
+
+                {{ note_form.content(class="form-control", rows="4") }}
+
+            </div>
+
+            {{ note_form.submit(class="btn btn-primary") }}
+
+        </form>
+
+    </div>
+
+</div>
+
 {% if notes %}
 
     {% for note in notes %}
@@ -118,11 +154,41 @@
 
         <div class="card-body">
 
-            <h5 class="card-title">
+            <div class="d-flex justify-content-between align-items-start">
 
-                {{ note.title }}
+                <h5 class="card-title">
 
-            </h5>
+                    {{ note.title }}
+
+                </h5>
+
+                <div class="d-flex gap-2">
+
+                    <a
+                        href="{{ url_for('notes.edit', note_id=note.id) }}"
+                        class="btn btn-sm btn-outline-primary">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('notes.delete', note_id=note.id) }}">
+
+                        <button
+                            type="submit"
+                            class="btn btn-sm btn-outline-danger">
+
+                            Hapus
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
 
             <p class="card-text">
 
@@ -147,7 +213,8 @@
 
 <div class="alert alert-secondary">
 
-    Belum ada catatan untuk produk ini.
+    Belum ada catatan untuk produk ini. Gunakan form di atas untuk
+    menambahkan catatan pertama Anda.
 
 </div>
 
