@@ -1,27 +1,7 @@
 import requests
 
 from flask import current_app
-def _request(endpoint):
 
-    base_url = current_app.config[
-        "FAKESTORE_API_BASE_URL"
-    ]
-
-    url = f"{base_url}{endpoint}"
-
-    response = requests.get(
-
-        url,
-
-        timeout=current_app.config[
-            "REQUEST_TIMEOUT"
-        ]
-
-    )
-
-    response.raise_for_status()
-
-    return response.json()
 from requests.exceptions import (
     Timeout,
     ConnectionError,
